@@ -38,11 +38,14 @@ There are two ways to self-host Blogo:
 
 The easiest way to self-host Blogo is by using Docker. I will try to publish a Docker image soon, but for now you can build it yourself:
 
-1. Clone this repo: `git clone https://github.com/pluja/blogo.git`
-2. Copy the `env.example` file to `.env` and edit it to your liking.
-3. Build and run: `docker-compose up --build -d`
+1. Get the docker-compose.yml: `wget https://raw.githubusercontent.com/pluja/blogo/main/docker-compose.yml`
+2. Get the .env file: `wget https://raw.githubusercontent.com/pluja/blogo/main/env.example -O .env`
+    - Edit the `.env` file to fit your needs.
+3. Run blogo: `docker-compose up -d`
 
 Blogo is now available at [http://localhost:3000](http://localhost:3000).
+
+Put your markdown files in the `articles` folder. You can also put your static files in the `static` folder (you will need to bind it).
 
 ### From source
 
