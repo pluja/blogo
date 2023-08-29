@@ -10,5 +10,5 @@ node_modules
 go.work
 .env
 articles
-*.md
+TODO.md
 style.css
