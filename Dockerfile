@@ -18,7 +18,6 @@ WORKDIR /app
 COPY . .
 RUN npm install && \
     npx tailwindcss -o ./style.css --minify
-RUN ls -al
 
 # Start from a complete image
 FROM alpine:latest as certs
@@ -37,7 +36,6 @@ COPY templates templates
 COPY static static
 
 COPY --from=node /app/style.css ./static/css/style.css
-RUN ls -al /app/static/css/
 
 EXPOSE 3000
 CMD ["/app/blogo", "-path", "/app"]
