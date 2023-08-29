@@ -1,0 +1,44 @@
+{{define "title"}}#{{.Tag}} | {{.Blogo.Title}}{{end}}
+
+{{define "extraHead"}}
+<meta property="og:type" content="website" />
+<meta name="description" content="{{.Blogo.Description}}">
+<meta property="og:description" content="{{.Blogo.Description}}" />
+<meta name="keywords" content="{{.Blogo.Keywords}}">
+<meta property="og:title" content="#{{.Tag}} | {{.Blogo.Title}}" />
+<meta property="og:url" content="{{.Blogo.Url}}" />
+<!--Add canonical url-->
+<link rel="canonical" href="{{.Blogo.Url}}/t/{{.Tag}}" />
+{{end}}
+
+{{define "main"}}
+    <section class="flex flex-col items-center justify-center font-mono px-4 mt-8">
+        <h2 class="text-2xl font-bold">🏷️ #{{.Tag}}</h2>
+        <ul class="max-w-lg mb-8 mt-6 space-y-3">
+            {{range .Articles}}
+                <li>
+                    <div class="text-xs text-gray-500">
+                        ({{humanizeTime .Date}})
+                    </div>
+                    <div>
+                        :: <a class="underline text-lg" href="/p/{{.Slug}}">{{.Title}}</a>
+                    </div>
+                    {{if ne .Summary ""}}
+                        <div class="text-sm text-base-content text-opacity-70 text-justify mt-2">
+                            {{.Summary}}
+                        </div>
+                    {{end}}
+                    {{if ne (len .Tags) 0}}
+                        <div class="mt-2">
+                            {{range .Tags}}
+                                <a class="no-underline text-gray-500 text-xs hover:text-info py-2" href="/t/{{.}}">#{{.}}</a>
+                            {{end}}
+                        </div>
+                    {{end}}
+                </li>
+                <div class="divider"></div>
+            {{end}}
+        </ul>
+    </section>
+
+{{end}}

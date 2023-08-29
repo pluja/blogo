@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  blogo:
+    build: .
+    image: blogo:latest
+    container_name: blogo
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ./articles:/app/articles
+    ports:
+      - "3000:3000"
+    
+  redis:
+    image: redis:alpine
+    container_name: blogo-redis
+    restart: unless-stopped
+    volumes:
+      - redis:/data
+
+volumes:
+  redis:
+    name: blogo-redis

@@ -1,0 +1,14 @@
+node_modules
+*.override.yml
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+.env
+articles
+*.md
+style.css

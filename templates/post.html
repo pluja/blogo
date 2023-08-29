@@ -1,0 +1,93 @@
+{{define "title"}}{{.Article.Title}} | {{.Blogo.Title}}{{end}}
+
+{{define "extraHead"}}
+<!--SEO and Sharing metas-->
+<meta property="og:type" content="article" />
+<meta name="description" content="{{.Article.Summary}}">
+<meta property="og:description" content="{{.Article.Summary}}" />
+<meta name="keywords" content="{{.Article.Tags}}">
+<meta property="og:title" content="{{.Article.Title}}" />
+<meta property="og:url" content="{{.Blogo.Url}}/p/{{.Article.Slug}}" />
+
+<!--Avoid indexing drafts-->
+{{if .Article.Draft}}
+    <meta name="robots" content="noindex">
+{{end}}
+
+<!--Add image as banner for social sharing-->
+{{if ne .Article.Image ""}}
+    <meta property="og:image" content="{{.Article.Image}}" />
+    <meta property="thumbnail" content="{{.Article.Image}}">
+    <meta name="twitter:image" content="{{.Article.Image}}">
+{{else}}
+    <meta property="og:image" content="{{.Blogo.Url}}/static/assets/logo.png" />
+    <meta property="thumbnail" content="{{.Blogo.Url}}/static/assets/logo.png">
+    <meta name="twitter:image" content="{{.Blogo.Url}}/static/assets/logo.png">
+{{end}}
+
+<!--Add canonical url-->
+<link rel="canonical" href="{{.Blogo.Url}}/p/{{.Article.Slug}}" />
+
+<!--Add CSS styles-->
+<link rel="stylesheet" type="text/css" href="/static/css/markdown.css">
+<style>
+    #bg-image {
+        position: relative; 
+        overflow: hidden;
+        padding-top: 4em;
+        padding-bottom: 4em;
+    }
+
+    #bg-image::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url('{{.Article.Image}}');
+        background-size: cover;
+        z-index: -1;
+        filter: blur(5px);
+        opacity: 0.7;
+        background-position: center;
+    }
+</style>
+{{end}}
+
+{{define "main"}}
+
+<section id="{{if ne .Article.Image ""}}bg-image{{end}}" class="block text-center py-8">
+    {{if .Article.Draft}}
+        <div class="text-center pb-2">
+            <span class="badge badge-warning badge-lg font-bold">DRAFT</span>
+        </div>
+    {{end}}
+
+    <h1 class="text-4xl md:text-5xl mb-2 capitalize drop-shadow-lg text-black dark:text-slate-100">{{.Article.Title}}</h1>
+    
+    {{if ne .Article.Author ""}}
+        <div class="opacity-75 font-bold text-center mt-2 mb-0 text-sm drop-shadow-sm text-black dark:text-slate-100">by {{.Article.Author}}, {{humanizeTime .Article.Date}}</div>
+    {{else}}
+        <div class="opacity-75 font-bold text-center mt-2 mb-0 text-sm text-black dark:text-slate-100">{{humanizeTime .Article.Date}}</div>
+    {{end}}
+    {{range .Article.Tags}}
+        <span class="text-center my-2 inline-block opacity-75 text-black dark:text-slate-100">
+            <a class="badge-outline badge no-underline badge-md hover:text-info" href="/t/{{.}}">#{{.}}</a>
+        </span>
+    {{end}}
+    {{if and (ne .Article.NostrUrl "") (ne .Article.NostrUrl "0") (ne .Article.NostrUrl "false")}}
+        <div class="text-center">
+            <a class="text-sm underline dark:text-purple-200" href="{{.Article.NostrUrl}}">Read on Nostr</a>
+        </div>
+    {{end}}
+</section>
+
+<section class="block mt-8 px-4">
+    <p class="text-base-content opacity-70 font-mono text-sm text-center">~{{readTime .Article.Md}} min read</p>
+    <div id="markdown" class="prose lg:prose-xl max-w-4xl mx-auto mt-auto mb-auto pb-12">
+        {{html .Article.Html}}
+    </div>
+</section>
+
+{{end}}

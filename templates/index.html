@@ -1,0 +1,60 @@
+{{define "title"}}{{.Blogo.Title}}{{end}}
+
+{{define "extraHead"}}
+<meta property="og:type" content="website" />
+<meta name="description" content="{{.Blogo.Description}}">
+<meta property="og:description" content="{{.Blogo.Description}}" />
+<meta name="keywords" content="{{.Blogo.Keywords}}">
+<meta property="og:title" content="{{.Blogo.Title}}" />
+<meta property="og:url" content="{{.Blogo.Url}}" />
+<meta property="og:image" content="{{.Blogo.Url}}/static/assets/logo.png" />
+<meta property="thumbnail" content="{{.Blogo.Url}}/static/assets/logo.png">
+<meta name="twitter:image" content="{{.Blogo.Url}}/static/assets/logo.png">
+<!--Add canonical url-->
+<link rel="canonical" href="{{.Blogo.Url}}" />
+{{end}}
+
+{{define "main"}}
+    {{if ne .Blogo.Description ""}}
+        <div class="divider"></div>
+        <section class="flex justify-center px-4">
+            <p class="max-w-md text-center leading-6">
+                {{.Blogo.Description}}
+            </p>
+        </section>
+    {{end}}
+
+    <div class="divider"></div>
+    <section class="flex flex-col items-center justify-center font-mono px-4 mt-8">
+        <h2 class="text-2xl font-bold">📝 Posts</h2>
+        <ul class="max-w-lg mb-8 mt-6 space-y-3">
+            {{range .Articles}}
+                {{if .Draft}}
+                    {{continue}}
+                {{end}}
+                <li>
+                    <div class="text-xs text-gray-500">
+                        ({{humanizeTime .Date}})
+                    </div>
+                    <div>
+                        :: <a class="underline text-lg" href="/p/{{.Slug}}">{{.Title}}</a>
+                    </div>
+                    {{if ne .Summary ""}}
+                        <div class="text-sm text-base-content text-opacity-70 text-justify mt-2">
+                            {{.Summary}}
+                        </div>
+                    {{end}}
+                    {{if ne (len .Tags) 0}}
+                        <div class="mt-2">
+                            {{range .Tags}}
+                                <a class="no-underline text-gray-500 text-xs hover:text-info py-2" href="/t/{{.}}">#{{.}}</a>
+                            {{end}}
+                        </div>
+                    {{end}}
+                </li>
+                <div class="divider"></div>
+            {{end}}
+        </ul>
+    </section>
+
+{{end}}
