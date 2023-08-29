@@ -38,7 +38,7 @@ There are two ways to self-host Blogo:
 
 The easiest way to self-host Blogo is by using Docker. I will try to publish a Docker image soon, but for now you can build it yourself:
 
-1. Clone this repo: `git clone https://gitlab.com/pluja/blogo.git`
+1. Clone this repo: `git clone https://github.com/pluja/blogo.git`
 2. Copy the `env.example` file to `.env` and edit it to your liking.
 3. Build and run: `docker-compose up --build -d`
 
@@ -50,7 +50,7 @@ Blogo is now available at [http://localhost:3000](http://localhost:3000).
 
 If you don't want to use Docker, you can also run Blogo from source:
 
-1. Clone this repo: `git clone https://gitlab.com/pluja/blogo.git`
+1. Clone this repo: `git clone https://github.com/pluja/blogo.git`
 2. Copy the `env.example` file to `.env` and edit it to your liking.
     - You will need to add two variables: `REDIS_HOST` and `REDIS_PORT`.
 3. [Install Golang](https://go.dev/doc/install).
@@ -117,11 +117,11 @@ You can customize the look and feel of your blog by editing the templates and CS
 The templates are located in the `templates` folder:
 
 - `base.html`: The base template. All other templates extend this one.
-    - Receives: A [Config](https://gitlab.com/pluja/blogo/-/blob/main/blogo/models.go) struct with the name `Blogo`.
+    - Receives: A [Config](https://github.com/pluja/blogo/-/blob/main/blogo/models.go) struct with the name `Blogo`.
 - `index.html`: The index template. This is the template used for the index page, where the posts are listed.
-    - Receives: a list of articles [[]Article](https://gitlab.com/pluja/blogo/-/blob/main/blogo/models.go) and the welcome text (string).
+    - Receives: a list of articles [[]Article](https://github.com/pluja/blogo/-/blob/main/blogo/models.go) and the welcome text (string).
 - `post.html`: The post template. This is the template used for the post reading page.
-    - Receives: an [Article](https://gitlab.com/pluja/blogo/-/blob/main/blogo/models.go).
+    - Receives: an [Article](https://github.com/pluja/blogo/-/blob/main/blogo/models.go).
 - `about.html`: The about template. This is the template used for the about page.
 
 ### Styles
