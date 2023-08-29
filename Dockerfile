@@ -37,6 +37,7 @@ COPY templates templates
 COPY static static
 
 COPY --from=node /app/style.css ./static/css/style.css
+RUN ls -al /app/static/css/
 
 EXPOSE 3000
 CMD ["/app/blogo", "-path", "/app"]
