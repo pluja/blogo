@@ -19,6 +19,7 @@ Now, here's the twist: Blogo can also publish your posts to Nostr for backing th
     - Github Flavored Markdown is supported.
     - Syntax Highlighting using [chroma](https://github.com/alecthomas/chroma)
     - YAML Metadata for posts info.
+- **Feeds**: RSS, Atom and JSON feeds!
 - **About page**: Easily create an About page so everyone can know more about you.
 - **Customizable**: You can fully customize the look and feel of your blog by editing the templates and CSS.
     - Uses Golang Templates, TailwindCSS and pure plain CSS.
@@ -45,24 +46,14 @@ The easiest way to self-host Blogo is by using Docker. I will try to publish a D
 
 Blogo is now available at [http://localhost:3000](http://localhost:3000).
 
-Put your markdown files in the `articles` folder. You can also put your static files in the `static` folder (you will need to bind it).
+#### Create your first article
 
-### From source
+> For more complete instructions, read the [usage](#usage) guide.
 
-> IMPORTANT: Blogo requires a Redis server to run. You can use the Docker Compose file in this repo to run Redis, or you can use your own.
+- Run `docker exec -it blogo blogo -new my-post-slug` to create a new post.
+- The new post is available in the `articles` folder as `my-post-slug.md`.
 
-If you don't want to use Docker, you can also run Blogo from source:
-
-1. Clone this repo: `git clone https://github.com/pluja/blogo.git`
-2. Copy the `env.example` file to `.env` and edit it to your liking.
-    - You will need to add two variables: `REDIS_HOST` and `REDIS_PORT`.
-3. [Install Golang](https://go.dev/doc/install).
-4. Build and run: `go build -o blogo .`
-5. Run: `./blogo`
-    - By default, blogo looks at the current folder for the content. The content are the `articles`, `static` and `templates` folders. If you want to change the default content folder, you can do so with the `-path` flag.
-        - Example: `./blogo -path /path/to/content/folder`
-    - By default, Blogo runs on port `3000`. You can change the default running port with the `-port` flag.
-        - Example: `./blogo -port 8080`
+Put all your markdown files in the `articles` folder. You can also put your static files in the `static` folder (you will need to bind it).
 
 ## Usage
 
