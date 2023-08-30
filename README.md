@@ -39,10 +39,23 @@ There are two ways to self-host Blogo:
 
 The easiest way to self-host Blogo is by using Docker. I will try to publish a Docker image soon, but for now you can build it yourself:
 
-1. Get the docker-compose.yml: `wget https://raw.githubusercontent.com/pluja/blogo/main/docker-compose.yml`
-2. Get the .env file: `wget https://raw.githubusercontent.com/pluja/blogo/main/env.example -O .env`
-    - Edit the `.env` file to fit your needs.
-3. Run blogo: `docker-compose up -d`
+1. Get the docker-compose.yml:
+
+```bash
+wget https://raw.githubusercontent.com/pluja/blogo/main/docker-compose.yml
+```
+
+2. Get the .env file:
+```bash
+wget https://raw.githubusercontent.com/pluja/blogo/main/env.example -O .env
+```
+> Edit the `.env` file to fit your needs.
+
+3. Run blogo:
+
+```bash
+docker-compose up -d
+```
 
 Blogo is now available at [http://localhost:3000](http://localhost:3000).
 
@@ -75,6 +88,7 @@ Here's a list of the available metadata fields:
 - `Date`: The date of the post. Must be in the format `YYYY-MM-DD HH:MM`.
 - `Draft`: Whether the post is a draft or not. Must be `true` or `false`.
 - `Layout`: The layout of the post. For now, only `post` is available.
+- `NostrUrl`: The url to the Nostr content. If set to `0` it will disable the posting of that article to Nostr even if Nostr publishing is enabled.
 
 ### About page
 
