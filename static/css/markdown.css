@@ -59,6 +59,16 @@
     opacity: 85%;
 }
 
+#markdown li[id^="fnref:"] { /* Footnote reference */
+    font-size: 0.9em;
+    opacity: 85%;
+}
+
+#markdown table {
+    overflow-x: scroll;
+    overflow-y: visible;
+}
+
 /* Screens under 600px */
 @media (max-width: 600px) {
     #markdown p {

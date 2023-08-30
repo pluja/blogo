@@ -30,34 +30,11 @@
 
 <!--Add CSS styles-->
 <link rel="stylesheet" type="text/css" href="/static/css/markdown.css">
-<style>
-    #bg-image {
-        position: relative; 
-        overflow: hidden;
-        padding-top: 4em;
-        padding-bottom: 4em;
-    }
-
-    #bg-image::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-image: url('{{.Article.Image}}');
-        background-size: cover;
-        z-index: -1;
-        filter: blur(5px);
-        opacity: 0.7;
-        background-position: center;
-    }
-</style>
 {{end}}
 
 {{define "main"}}
 
-<section id="{{if ne .Article.Image ""}}bg-image{{end}}" class="block text-center py-8">
+<section class="block text-center py-8">
     {{if .Article.Draft}}
         <div class="text-center pb-2">
             <span class="badge badge-warning badge-lg font-bold">DRAFT</span>
@@ -81,9 +58,15 @@
             <a class="text-sm underline dark:text-purple-200" href="{{.Article.NostrUrl}}">Read on Nostr</a>
         </div>
     {{end}}
+
+    {{if ne .Article.Image ""}}
+    <div class="h-72 my-4">
+        <img src="{{.Article.Image}}" class="w-full h-full object-cover object-center opacity-90 dark:opacity-75" alt="">
+    </div>
+    {{end}}
 </section>
 
-<section class="block mt-8 px-4">
+<section class="block mt-1 px-4">
     <p class="text-base-content opacity-70 font-mono text-sm text-center">~{{readTime .Article.Md}} min read</p>
     <div id="markdown" class="prose lg:prose-xl max-w-4xl mx-auto mt-auto mb-auto pb-12">
         {{html .Article.Html}}
