@@ -13,8 +13,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var Blogo Config
-
 func main() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)

@@ -34,41 +34,43 @@
 
 {{define "main"}}
 
-<section class="block text-center py-8">
-    {{if .Article.Draft}}
-        <div class="text-center pb-2">
-            <span class="badge badge-warning badge-lg font-bold">DRAFT</span>
-        </div>
-    {{end}}
-
-    <h1 class="text-4xl md:text-5xl mb-2 capitalize drop-shadow-lg text-black dark:text-slate-100">{{.Article.Title}}</h1>
-    
-    {{if ne .Article.Author ""}}
-        <div class="opacity-75 font-bold text-center mt-2 mb-0 text-sm drop-shadow-sm text-black dark:text-slate-100">by {{.Article.Author}}, {{humanizeTime .Article.Date}}</div>
-    {{else}}
-        <div class="opacity-75 font-bold text-center mt-2 mb-0 text-sm text-black dark:text-slate-100">{{humanizeTime .Article.Date}}</div>
-    {{end}}
-    {{range .Article.Tags}}
-        <span class="text-center my-2 inline-block opacity-75 text-black dark:text-slate-100">
-            <a class="badge-outline badge no-underline badge-md hover:text-info" href="/t/{{.}}">#{{.}}</a>
-        </span>
-    {{end}}
-    {{if and (ne .Article.NostrUrl "") (ne .Article.NostrUrl "0") (ne .Article.NostrUrl "false")}}
-        <div class="text-center">
-            <a class="text-sm underline dark:text-purple-200" href="{{.Article.NostrUrl}}">Read on Nostr</a>
-        </div>
-    {{end}}
-
+<section class="py-2 text-center">
     {{if ne .Article.Image ""}}
-    <div class="h-72 my-4">
-        <img src="{{.Article.Image}}" class="w-full h-full object-cover object-center opacity-90 dark:opacity-75" alt="">
+    <div class="w-full my-4 h-80">
+        <img src="{{.Article.Image}}" class="object-cover object-center w-full h-full opacity-90 dark:opacity-75" alt="">
     </div>
     {{end}}
+
+    <h1 class="pt-4 mb-2 text-4xl text-black capitalize md:text-5xl drop-shadow-lg dark:text-slate-100">{{.Article.Title}}</h1>
+    <div class="mt-3 mb-3 opacity-50">
+        {{if and (ne .Article.NostrUrl "") (ne .Article.NostrUrl "0") (ne .Article.NostrUrl "false")}}
+            <div class="text-center">
+                <a class="text-sm text-purple-600 underline dark:text-purple-400" href="{{.Article.NostrUrl}}">Read on Nostr</a>
+            </div>
+        {{end}}
+        {{if .Article.Draft}}
+            <div class="pb-2 text-center">
+                <span class="font-bold badge badge-warning badge-lg">DRAFT</span>
+            </div>
+        {{end}}
+        {{if ne .Article.Author ""}}
+            <div class="mt-2 mb-0 text-sm text-black drop-shadow-sm dark:text-slate-100">by {{.Article.Author}}, {{humanizeTime .Article.Date}}</div>
+        {{else}}
+            <div class="mt-2 mb-0 text-sm font-bold text-black dark:text-slate-100">{{humanizeTime .Article.Date}}</div>
+        {{end}}
+        {{range .Article.Tags}}
+            <span class="inline-block my-2 text-xs text-center text-black dark:text-slate-100">
+                <a class="no-underline hover:text-blue-900 dark:hover:text-blue-300" href="/t/{{.}}">#{{.}}</a>
+            </span>
+        {{end}}
+        <p class="pb-1 space-x-2 font-mono text-sm text-center text-base-content">
+            (~{{readTime .Article.Md}} min read)
+        </p>
+    </div>  
 </section>
 
-<section class="block mt-1 px-4">
-    <p class="text-base-content opacity-70 font-mono text-sm text-center">~{{readTime .Article.Md}} min read</p>
-    <div id="markdown" class="prose lg:prose-xl max-w-4xl mx-auto mt-auto mb-auto pb-12">
+<section class="block px-4 mt-1">
+    <div id="markdown" class="max-w-4xl pb-12 mx-auto mt-auto mb-auto prose lg:prose-xl">
         {{html .Article.Html}}
     </div>
 </section>
