@@ -19,6 +19,7 @@ Now, here's the twist: Blogo can also publish your posts to Nostr for backing th
     - Github Flavored Markdown is supported.
     - Syntax Highlighting using [chroma](https://github.com/alecthomas/chroma)
     - YAML Metadata for posts info.
+- **Feeds**: RSS, Atom and JSON feeds!
 - **About page**: Easily create an About page so everyone can know more about you.
 - **Customizable**: You can fully customize the look and feel of your blog by editing the templates and CSS.
     - Uses Golang Templates, TailwindCSS and pure plain CSS.
@@ -38,31 +39,34 @@ There are two ways to self-host Blogo:
 
 The easiest way to self-host Blogo is by using Docker. I will try to publish a Docker image soon, but for now you can build it yourself:
 
-1. Get the docker-compose.yml: `wget https://raw.githubusercontent.com/pluja/blogo/main/docker-compose.yml`
-2. Get the .env file: `wget https://raw.githubusercontent.com/pluja/blogo/main/env.example -O .env`
-    - Edit the `.env` file to fit your needs.
-3. Run blogo: `docker-compose up -d`
+1. Get the docker-compose.yml:
+
+```bash
+wget https://raw.githubusercontent.com/pluja/blogo/main/docker-compose.yml
+```
+
+2. Get the .env file:
+```bash
+wget https://raw.githubusercontent.com/pluja/blogo/main/env.example -O .env
+```
+> Edit the `.env` file to fit your needs.
+
+3. Run blogo:
+
+```bash
+docker-compose up -d
+```
 
 Blogo is now available at [http://localhost:3000](http://localhost:3000).
 
-Put your markdown files in the `articles` folder. You can also put your static files in the `static` folder (you will need to bind it).
+#### Create your first article
 
-### From source
+> For more complete instructions, read the [usage](#usage) guide.
 
-> IMPORTANT: Blogo requires a Redis server to run. You can use the Docker Compose file in this repo to run Redis, or you can use your own.
+- Run `docker exec -it blogo blogo -new my-post-slug` to create a new post.
+- The new post is available in the `articles` folder as `my-post-slug.md`.
 
-If you don't want to use Docker, you can also run Blogo from source:
-
-1. Clone this repo: `git clone https://github.com/pluja/blogo.git`
-2. Copy the `env.example` file to `.env` and edit it to your liking.
-    - You will need to add two variables: `REDIS_HOST` and `REDIS_PORT`.
-3. [Install Golang](https://go.dev/doc/install).
-4. Build and run: `go build -o blogo .`
-5. Run: `./blogo`
-    - By default, blogo looks at the current folder for the content. The content are the `articles`, `static` and `templates` folders. If you want to change the default content folder, you can do so with the `-path` flag.
-        - Example: `./blogo -path /path/to/content/folder`
-    - By default, Blogo runs on port `3000`. You can change the default running port with the `-port` flag.
-        - Example: `./blogo -port 8080`
+Put all your markdown files in the `articles` folder. You can also put your static files in the `static` folder (you will need to bind it).
 
 ## Usage
 
@@ -84,6 +88,7 @@ Here's a list of the available metadata fields:
 - `Date`: The date of the post. Must be in the format `YYYY-MM-DD HH:MM`.
 - `Draft`: Whether the post is a draft or not. Must be `true` or `false`.
 - `Layout`: The layout of the post. For now, only `post` is available.
+- `NostrUrl`: The url to the Nostr content. If set to `0` it will disable the posting of that article to Nostr even if Nostr publishing is enabled.
 
 ### About page
 
