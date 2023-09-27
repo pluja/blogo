@@ -2,10 +2,13 @@
 module.exports = {
   content: ["./**/*.{html,js}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'garamond': ['garamond', 'serif'],
+      },
+    },
   },
   plugins: [
-    require("daisyui"),
     require('@tailwindcss/typography'),
   ],
 }

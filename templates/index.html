@@ -15,8 +15,12 @@
 {{end}}
 
 {{define "main"}}
+    {{if ne .Blogo.Title ""}}
+        <section class="flex justify-center p-4">
+            <h1 class="text-4xl font-bold">{{.Blogo.Title}}</h1>
+        </section>
+    {{end}}
     {{if ne .Blogo.Description ""}}
-        <div class="divider"></div>
         <section class="flex justify-center px-4">
             <p class="max-w-lg text-sm leading-6 text-center">
                 {{.Blogo.Description}}
@@ -24,28 +28,25 @@
         </section>
     {{end}}
 
-    <div class="divider"></div>
-    <section class="flex flex-col items-center justify-center px-4 mt-8 font-mono">
-        <h2 class="text-2xl font-bold"><span class="opacity-50">></span> Posts</h2>
-        <ul class="max-w-lg mt-6 mb-8 space-y-3">
+    <section class="flex flex-col items-center justify-center px-6 font-mono mt-14">
+        <h2 class="text-2xl font-bold"><span class="opacity-50">~</span> Posts</h2>
+        <ul class="max-w-lg mt-4 mb-8 space-y-8 ">
             {{range .Articles}}
                 {{if .Draft}}
                     {{continue}}
                 {{end}}
                 <li>
-                    <div class="text-xs text-gray-500">
-                        ({{humanizeTime .Date}})
-                    </div>
+                    <span class="text-xs mb-0.5 text-right text-gray-500">({{humanizeTime .Date}})</span>
                     <div>
-                        :: <a class="text-lg font-bold underline hover:text-blue-900 dark:hover:text-blue-300" href="/p/{{.Slug}}">{{.Title}}</a>
+                        .* <a class="text-lg font-bold underline hover:text-blue-900 dark:hover:text-blue-300" href="/p/{{.Slug}}">{{.Title}}</a>
                     </div>
                     {{if ne .Summary ""}}
-                        <div class="mt-2 text-sm text-justify text-base-content text-opacity-70">
+                        <div class="mt-2 text-sm text-justify text-opacity-70 dark:text-gray-400">
                             {{.Summary}}
                         </div>
                     {{end}}
                     {{if ne (len .Tags) 0}}
-                        <div class="mt-2">
+                        <div class="mt-0.5">
                             {{range .Tags}}
                                 <a class="py-2 text-xs text-gray-500 no-underline hover:text-blue-900 dark:hover:text-blue-300" href="/t/{{.}}">#{{.}}</a>
                             {{end}}

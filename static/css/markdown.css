@@ -1,78 +1,12 @@
-#markdown {
-    font-family: serif;
-}
-
-#markdown h1 {
-    text-align: center !important;
-}
-
-#markdown h3::before {
-    content: '~ ';
-}
-
-#markdown a {
-    color: rgb(124, 108, 184);
-}
-
-#markdown a:hover {
-    color: rgb(145, 130, 197);
-    text-decoration: none;
-}
-
 #markdown img {
-    max-width: 90%;
-    height: auto;
-    border-radius: .7em;
-    text-align: center;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
-}
-
-#markdown p {
-    font-size: 1.06em;
-}
-
-#markdown blockquote {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    padding-top: 0.6em;
-    padding-bottom: 0.6em;
-    padding-left: 1em;
-    padding-right: 1em;
-    border-left: 0.3rem solid rgb(76, 49, 172);
-    opacity: 85%;
-    background-color: #9f9eac11;
-    font-size: 1em;
-    word-wrap: break-word;
-    overflow: auto;
-    text-align: justify;
-}
-
-#markdown blockquote:hover {
-    opacity: 95%;
-}
-
-#markdown li[id^="fn:"] { /* Footnote */
-    font-size: 0.9em;
-    opacity: 85%;
-}
-
-#markdown li[id^="fnref:"] { /* Footnote reference */
-    font-size: 0.9em;
-    opacity: 85%;
+    border-radius: .5em;
 }
 
 #markdown table {
-    overflow-x: scroll;
-    overflow-y: visible;
-}
-
-/* Screens under 600px */
-@media (max-width: 600px) {
-    #markdown p {
-      font-size: 1.05em;
-      line-height: 1.5em;
-   }
-}
+    display: block;
+    max-width: -moz-fit-content;
+    max-width: fit-content;
+    margin: 0 auto;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
