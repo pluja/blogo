@@ -366,51 +366,45 @@ func AddMetadataToFile(filename, key, value string) error {
 	return nil
 }
 
-// Creates an article template
+// Creates an article template skeleton
 func CreateArticleTemplate(name string) error {
-	// Clean from spaces
-	name = strings.Replace(name, " ", "-", -1)
+	// Clean from spaces using a replacer for efficiency
+	replacer := strings.NewReplacer(" ", "-", "_", "-", ".", "-", ",", "-", "!", "-")
+	name = replacer.Replace(name)
+	name = strings.ToLower(name)
 
-	filePath := fmt.Sprintf("%v/articles/%s.md", os.Getenv("CONTENT_PATH"), name)
+	contentPath := os.Getenv("CONTENT_PATH")
+	filePath := fmt.Sprintf("%s/articles/%s.md", contentPath, name)
 
 	// Check if the file already exists
 	if _, err := os.Stat(filePath); err == nil {
 		return fmt.Errorf("file %s already exists", filePath)
 	}
 
-	// Create a new file
-	f, err := os.Create(filePath)
-	if err != nil {
-		return err
+	metadata := map[string]interface{}{
+		"Author":  "John Doe",
+		"Title":   strings.Replace(name, "-", " ", -1),
+		"Summary": "A brief summary of what this post is about.",
+		"Tags":    []string{"tag1", "tag2"},
+		"Date":    time.Now().Format("2006-01-02 15:04"),
+		"Image":   "https://picsum.photos/1920/1080",
+		"Layout":  "post",
+		"Draft":   true,
 	}
 
-	// Close the file when the function ends
-	defer f.Close()
-
-	metadata := make(map[string]interface{})
-	// Add new metadata
-	metadata["Author"] = "John Doe"
-	metadata["Title"] = strings.Replace(name, "-", " ", -1)
-	metadata["Summary"] = "A brief summary of what this post is about."
-	metadata["Tags"] = []string{"tag1", "tag2"}
-	metadata["Date"] = time.Now().Format("2006-01-02 15:04")
-	metadata["Image"] = "https://picsum.photos/1920/1080"
-	metadata["Layout"] = "post"
-	metadata["Draft"] = true
-
-	// Rebuild the YAML
+	// Build the YAML
 	yamlData, err := yaml.Marshal(metadata)
 	if err != nil {
 		return err
 	}
 
-	// Reassemble the markdown
+	// Assemble the markdown
 	var buffer bytes.Buffer
 	buffer.WriteString("---\n")
 	buffer.Write(yamlData)
 	buffer.WriteString("---\n")
 
-	// Write the updated markdown to the file
+	// Write the assembled markdown to the file
 	err = os.WriteFile(filePath, buffer.Bytes(), 0644)
 	if err != nil {
 		return err
