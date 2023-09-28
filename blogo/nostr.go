@@ -68,6 +68,11 @@ func InitNostr() error {
 
 // Publishes the article to Nostr if enabled and not yet published
 func PublishArticleToNostr(article ArticleData) error {
+	if article.Slug == "about" {
+		log.Info().Msg("Not publishing about page to Nostr")
+		return nil
+	}
+
 	if os.Getenv("PUBLISH_TO_NOSTR") == "false" {
 		log.Info().Msg("PUBLISH_TO_NOSTR is set to false. Not publishing...")
 		return nil

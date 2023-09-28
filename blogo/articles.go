@@ -129,13 +129,6 @@ func LoadArticle(filepath string) (err error) {
 	if err != nil {
 		return err
 	}
-
-	// Publish to Nostr
-	err = PublishArticleToNostr(article)
-	if err != nil {
-		log.Err(err).Msg("Error publishing article to Nostr")
-	}
-
 	switch slug {
 	case "about":
 		About.Slug = "about"
@@ -161,6 +154,13 @@ func LoadArticle(filepath string) (err error) {
 		}
 	}
 
+	if article.NostrUrl == "" && article.Slug != "about" {
+		// Publish to Nostr
+		err = PublishArticleToNostr(article)
+		if err != nil {
+			log.Err(err).Msg("Error publishing article to Nostr")
+		}
+	}
 	return nil
 }
 
