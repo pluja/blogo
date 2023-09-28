@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"fmt"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 
@@ -118,6 +119,9 @@ func NostrPublish(ad ArticleData) (string, error) {
 		ad.Md = sections[2]
 	}
 
+	// Add the article original URL to the top of the article
+	ad.Md = fmt.Sprintf("> [Read the original blog post](%v)\n\n", path.Join(Blogo.Url, "/p/", ad.Slug)) + ad.Md
+
 	// md5 hash the title and slug to get a unique ID
 	id := fmt.Sprintf("%x", md5.Sum([]byte(ad.Title+ad.Author)))
 
@@ -141,6 +145,8 @@ func NostrPublish(ad ArticleData) (string, error) {
 		Tags:      tags,
 		Content:   ad.Md,
 	}
+
+	log.Debug().Msgf("Nostr event: %v", ev)
 
 	// Sign the event
 	err := ev.Sign(nostrSk)
