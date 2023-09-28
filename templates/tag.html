@@ -12,33 +12,32 @@
 {{end}}
 
 {{define "main"}}
-    <section class="flex flex-col items-center justify-center font-mono px-4 mt-8">
-        <h2 class="text-2xl font-bold">🏷️ #{{.Tag}}</h2>
-        <ul class="max-w-lg mb-8 mt-6 space-y-3">
-            {{range .Articles}}
-                <li>
-                    <div class="text-xs text-gray-500">
-                        ({{humanizeTime .Date}})
-                    </div>
-                    <div>
-                        :: <a class="underline text-lg" href="/p/{{.Slug}}">{{.Title}}</a>
-                    </div>
-                    {{if ne .Summary ""}}
-                        <div class="text-sm text-base-content text-opacity-70 text-justify mt-2">
-                            {{.Summary}}
-                        </div>
-                    {{end}}
-                    {{if ne (len .Tags) 0}}
-                        <div class="mt-2">
-                            {{range .Tags}}
-                                <a class="no-underline text-gray-500 text-xs hover:text-info py-2" href="/t/{{.}}">#{{.}}</a>
-                            {{end}}
-                        </div>
-                    {{end}}
-                </li>
-                <div class="divider"></div>
+<section class="flex flex-col items-center justify-center px-4 mt-8 font-mono">
+    <h2 class="text-2xl font-bold">tag: #{{.Tag}}</h2>
+    <ul class="max-w-lg mt-4 mb-8 space-y-8 ">
+        {{range .Articles}}
+        <li>
+            <span class="text-xs mb-0.5 text-right text-gray-500">({{humanizeTime .Date}})</span>
+            <div>
+                .* <a class="text-lg font-bold underline capitalize hover:text-blue-900 dark:hover:text-blue-300"
+                    href="/p/{{.Slug}}">{{.Title}}</a>
+            </div>
+            {{if ne .Summary ""}}
+            <div class="mt-2 text-sm text-justify text-opacity-70 dark:text-gray-400">
+                {{.Summary}}
+            </div>
             {{end}}
-        </ul>
-    </section>
+            {{if ne (len .Tags) 0}}
+            <div class="mt-0.5">
+                {{range .Tags}}
+                <a class="py-2 text-xs text-gray-500 no-underline hover:text-blue-900 dark:hover:text-blue-300"
+                    href="/t/{{.}}">#{{.}}</a>
+                {{end}}
+            </div>
+            {{end}}
+        </li>
+        {{end}}
+    </ul>
+</section>
 
 {{end}}
