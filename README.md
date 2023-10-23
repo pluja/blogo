@@ -47,7 +47,7 @@ wget https://raw.githubusercontent.com/pluja/blogo/main/docker-compose.yml
 
 2. Get the .env file:
 ```bash
-wget https://raw.githubusercontent.com/pluja/blogo/main/env.example -O .env
+wget https://raw.githubusercontent.com/pluja/blogo/main/example.env -O .env
 ```
 > Edit the `.env` file to fit your needs.
 
