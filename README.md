@@ -33,8 +33,6 @@ Now, here's the twist: Blogo can also publish your posts to Nostr for backing th
 
 ## Self-hosting
 
-> [Read this on Blogo](https://blogo.site/p/installing-blogo)
-
 There are two ways to self-host Blogo:
 
 ### Docker
