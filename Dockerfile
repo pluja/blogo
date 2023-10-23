@@ -40,6 +40,7 @@ COPY templates templates
 COPY static static
 
 COPY --from=node /app/static/css/style.css ./static/css/style.css
+ENV PATH="/app:$PATH"
 
 EXPOSE 3000
 CMD ["/app/blogo", "-path", "/app"]
