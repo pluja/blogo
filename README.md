@@ -26,6 +26,7 @@ Now, here's the twist: Blogo can also publish your posts to Nostr for backing th
 - **Nostr**: Publish your posts to Nostr for backing them up and getting more reach.
     - Set your own key, or let Blogo generate one for you.
     - Set your own relay list, or use the default list.
+- **SEO/SSNN Optimized** - Blogo is optimized for SEO, it contains all necessary meta tags and social sharing tags!
 - **No JS**: Blogo doesn't use any JavaScript, so it's widely compatible and secure.
 - **CLI Tool**: A simple CLI tool will allow you to create new post templates.
 
