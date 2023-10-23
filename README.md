@@ -4,7 +4,10 @@ Blogo is a light and easy blogging engine. No complicated extras, just a straigh
 
 Now, here's the twist: Blogo can also publish your posts to Nostr for backing them up and getting even more reach. **Lift your ideas higher!**
 
-## [Demo](https://blogo.site)
+## [Demos](https://blogo.site)
+
+- [blogo.site](https://blogo.site)
+- [blog.kycnot.me](https://blog.kycnot.me)
 
 ## Features
 
