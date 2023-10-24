@@ -1,5 +1,5 @@
 # Builder stage
-FROM devopsworks/golang-upx:1.20 as builder
+FROM devopsworks/golang-upx:latest as builder
 ENV DEBIAN_FRONTEND noninteractive
 WORKDIR /app
 COPY blogo .
