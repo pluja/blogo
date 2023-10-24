@@ -4,7 +4,10 @@ Blogo is a light and easy blogging engine. No complicated extras, just a straigh
 
 Now, here's the twist: Blogo can also publish your posts to Nostr for backing them up and getting even more reach. **Lift your ideas higher!**
 
-## [Demo](https://blogo.site)
+## [Demos](https://blogo.site)
+
+- [blogo.site](https://blogo.site)
+- [blog.kycnot.me](https://blog.kycnot.me)
 
 ## Features
 
@@ -26,12 +29,12 @@ Now, here's the twist: Blogo can also publish your posts to Nostr for backing th
 - **Nostr**: Publish your posts to Nostr for backing them up and getting more reach.
     - Set your own key, or let Blogo generate one for you.
     - Set your own relay list, or use the default list.
+- **Auto-reload**: When a new post is added, or changed, blogo automatically reloads it.
+- **SEO/SSNN Optimized** - Blogo is optimized for SEO, it contains all necessary meta tags and social sharing tags!
 - **No JS**: Blogo doesn't use any JavaScript, so it's widely compatible and secure.
 - **CLI Tool**: A simple CLI tool will allow you to create new post templates.
 
 ## Self-hosting
-
-> [Read this on Blogo](https://blogo.site/p/installing-blogo)
 
 There are two ways to self-host Blogo:
 
@@ -47,7 +50,7 @@ wget https://raw.githubusercontent.com/pluja/blogo/main/docker-compose.yml
 
 2. Get the .env file:
 ```bash
-wget https://raw.githubusercontent.com/pluja/blogo/main/env.example -O .env
+wget https://raw.githubusercontent.com/pluja/blogo/main/example.env -O .env
 ```
 > Edit the `.env` file to fit your needs.
 
