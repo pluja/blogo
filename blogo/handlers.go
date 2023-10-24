@@ -56,6 +56,31 @@ func GetBlogPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func GetRawMarkdown(w http.ResponseWriter, r *http.Request) {
+	slug := chi.URLParam(r, "slug")
+
+	// Get article from redis
+	ctx := context.Background()
+	result, err := RedisDb.Get(ctx, slug).Result()
+	if err != nil {
+		log.Err(err).Msg("Error getting article from Redis")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Unmarshal the result into an Article struct
+	var article ArticleData
+	err = json.Unmarshal([]byte(result), &article)
+	if err != nil {
+		log.Err(err).Msg("Error unmarshalling article from Redis")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/plain")
+	w.Write([]byte(article.Md))
+}
+
 func GetTagPosts(w http.ResponseWriter, r *http.Request) {
 	tag := chi.URLParam(r, "tag")
 

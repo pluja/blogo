@@ -43,6 +43,7 @@ func InitRoutes() *chi.Mux {
 
 	r.Get("/", GetIndex)
 	r.Get("/p/{slug}", GetBlogPost)
+	r.Get("/p/{slug}/raw", GetRawMarkdown)
 	r.Get("/t/{tag}", GetTagPosts)
 	r.Get("/about", GetAbout)
 
