@@ -2,19 +2,18 @@ package main
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"html/template"
 	"os"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
-	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog/log"
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting/v2"
@@ -59,13 +58,24 @@ func InitGoldmark() {
 func LoadArticles() error {
 	InitGoldmark()
 	var slugs []string
-	err := filepath.Walk(fmt.Sprintf("%v/articles/", os.Getenv("CONTENT_PATH")), func(fpath string, info os.FileInfo, err error) error {
+	err := filepath.Walk(path.Join(os.Getenv("CONTENT_PATH"), "/articles/"), func(fpath string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
 		if !info.IsDir() && strings.HasSuffix(info.Name(), ".md") {
-			err := LoadArticle(fpath)
+			article, err := GetArticleFromFile(fpath)
+			if err != nil {
+				log.Error().Msgf("Could not get article from file %v", fpath)
+				return err
+			}
+
+			err = LoadArticle(article)
+			if err != nil {
+				return err
+			}
+
+			err = GenerateArticleStatic(article)
 			if err != nil {
 				return err
 			}
@@ -79,14 +89,15 @@ func LoadArticles() error {
 	}
 
 	// Remove articles that are no longer in the articles folder from Redis
-	ctx := context.Background()
-	articleSlugs, err := RedisDb.SMembers(ctx, "articles").Result()
+	articleSlugs, err := Badger.GetAllArticleSlugs()
 	if err != nil {
 		log.Err(err).Msg("Error getting articles from Redis")
 		articleSlugs = []string{}
 	}
 	left, _ := Difference(articleSlugs, slugs)
-	log.Printf("Removing %v articles from Redis. Left articles: %v", left, slugs)
+	if len(left) > 0 {
+		log.Printf("Removing %v articles from Badger. Left articles: %v", len(left), slugs)
+	}
 	for _, articleSlug := range left {
 		if !StringInSlice(articleSlug, slugs) {
 			RemoveArticle(fmt.Sprintf("%v/articles/%v.md", os.Getenv("CONTENT_PATH"), articleSlug))
@@ -121,15 +132,8 @@ func GetArticleContent(filename string) (template.HTML, string, error) {
 }
 
 // Loads an article from a markdown file and stores it in Redis
-func LoadArticle(filepath string) (err error) {
-	slug, extension := ParseFilePath(filepath)
-	filename := fmt.Sprintf("%v%v", slug, extension)
-
-	article, err := GetArticleFromFile(filename)
-	if err != nil {
-		return err
-	}
-	switch slug {
+func LoadArticle(article ArticleData) (err error) {
+	switch article.Slug {
 	case "about":
 		About.Slug = "about"
 		About.Data = article
@@ -139,19 +143,7 @@ func LoadArticle(filepath string) (err error) {
 		if err != nil {
 			return fmt.Errorf("error while marshalling article to JSON: %v", err)
 		}
-
-		// Store the article in Redis with the slug as the key
-		ctx := context.Background()
-		err = RedisDb.Set(ctx, slug, articleJson, 0).Err()
-		if err != nil {
-			return fmt.Errorf("error while setting article to Redis: %v", err)
-		}
-		RedisDb.SAdd(ctx, "articles", slug)
-
-		// Add article to a set for each tag
-		for _, tag := range article.Tags {
-			RedisDb.SAdd(ctx, fmt.Sprintf("tag:%v", tag), slug)
-		}
+		Badger.Set("post_"+article.Slug, articleJson)
 	}
 
 	if article.NostrUrl == "" && article.Slug != "about" {
@@ -168,59 +160,13 @@ func LoadArticle(filepath string) (err error) {
 func RemoveArticle(filename string) {
 	log.Printf("Removing article: %v", filename)
 	slug, _ := ParseFilePath(filename)
-
-	ctx := context.Background()
-	// Get the article from Redis
-	article, err := RedisDb.Get(ctx, slug).Result()
-	if err != nil || err == redis.Nil {
-		log.Err(err).Msgf("Could not get article %v from Redis", slug)
-		return
-	}
-
-	// Unmarshal the article data
-	var articleData ArticleData
-	err = json.Unmarshal([]byte(article), &articleData)
-	if err != nil {
-		log.Err(err).Msgf("Could not unmarshal article %v from Redis", slug)
-		return
-	}
-
-	pipe := RedisDb.Pipeline()
-
-	// Delete the article
-	delCmd := pipe.Del(ctx, slug)
-
-	// Remove from the "articles" set
-	sRemCmd := pipe.SRem(ctx, "articles", slug)
-
-	// Remove from each tag set
-	tagRemCmds := make([]*redis.IntCmd, len(articleData.Tags))
-	for i, tag := range articleData.Tags {
-		tagRemCmds[i] = pipe.SRem(ctx, fmt.Sprintf("tag:%v", tag), slug)
-	}
-
-	_, err = pipe.Exec(ctx)
-	if err != nil {
-		log.Err(err).Msgf("Could not execute pipelined commands for article %v", slug)
-		return
-	}
-
-	// Check for command errors
-	if delCmd.Err() != nil || sRemCmd.Err() != nil {
-		log.Err(err).Msg("Failed to delete article or remove from 'articles' set")
-	}
-	for _, cmd := range tagRemCmds {
-		if cmd.Err() != nil {
-			log.Err(cmd.Err()).Msg("Failed to remove article from a tag set")
-		}
-	}
+	Badger.DeleteArticle(slug)
 }
 
 // Returns an ArticleData struct from a markdown file
-func GetArticleFromFile(filename string) (ArticleData, error) {
-	log.Printf("Getting article from file: %v", filename)
-	filepath := fmt.Sprintf("%v/articles/%v", os.Getenv("CONTENT_PATH"), filename)
-	slug, _ := ParseFilePath(filepath)
+func GetArticleFromFile(filepath string) (ArticleData, error) {
+	slug, extension := ParseFilePath(filepath)
+	filename := slug + extension
 
 	var article ArticleData
 	// Read the markdown file
@@ -362,7 +308,12 @@ func AddMetadataToFile(filename, key, value string) error {
 		return err
 	}
 
-	LoadArticle(filename)
+	article, err := GetArticleFromFile(path.Join(os.Getenv("CONTENT_PATH"), "/articles", filename))
+	if err != nil {
+		log.Error().Msgf("Could not get article from file %v", filePath)
+		return err
+	}
+	LoadArticle(article)
 	return nil
 }
 

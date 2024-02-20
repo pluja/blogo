@@ -36,7 +36,14 @@ func main() {
 
 	if *dev {
 		os.Setenv("DEV", "true")
-		os.Setenv("CONTENT_PATH", "..")
+		//os.Setenv("CONTENT_PATH", "..")
+		os.Setenv("DEV", "true")
+		log.Logger = log.Output(
+			zerolog.ConsoleWriter{
+				Out:        os.Stdout,
+				TimeFormat: "15:04:05",
+			},
+		).With().Caller().Logger()
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
 
@@ -67,7 +74,8 @@ func main() {
 	}
 
 	InitSettings()
-	InitRedis()
+	InitBadger()
+	//InitRedis()
 	InitTemplates()
 	r := InitRoutes()
 

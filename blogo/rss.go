@@ -1,10 +1,10 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"os"
+	"sort"
 	"time"
 
 	"github.com/gorilla/feeds"
@@ -21,7 +21,11 @@ func UpdateFeed() error {
 		Created:     now,
 	}
 
-	articles := GetAllArticles()
+	articles := Badger.GetAllArticles()
+	// Sort by date
+	sort.Slice(articles, func(i, j int) bool {
+		return articles[i].Date.After(articles[j].Date)
+	})
 
 	feed.Items = []*feeds.Item{}
 	for _, article := range articles {
@@ -35,36 +39,30 @@ func UpdateFeed() error {
 		feed.Items = append(feed.Items, item)
 	}
 
-	// Save feed to Redis
-	ctx := context.Background()
+	// Save feed to badger
 	json, err := json.Marshal(feed)
 	if err != nil {
 		log.Err(err).Msg("Error marshalling feed to JSON")
 		return err
 	}
-	err = RedisDb.Set(ctx, "feed", json, 0).Err()
-	if err != nil {
-		log.Err(err).Msg("Error saving feed to Redis")
-	}
+	Badger.Set("feed", json)
 	return err
 }
 
 func GetFeed() feeds.Feed {
-	ctx := context.Background()
-	result, err := RedisDb.Get(ctx, "feed").Result()
+	result, err := Badger.Get("feed")
 	if err != nil {
-		log.Err(err).Msg("Error getting feed from Redis")
+		log.Err(err).Msg("Error getting feed from Badger")
 		return feeds.Feed{}
 	}
 
 	// Unmarshal the result into an Article struct
 	var feed feeds.Feed
-	err = json.Unmarshal([]byte(result), &feed)
+	err = json.Unmarshal(result, &feed)
 	if err != nil {
-		log.Err(err).Msg("Error unmarshalling feed from Redis")
+		log.Err(err).Msg("Error unmarshalling feed from Badger")
 		return feeds.Feed{}
 	}
-
 	return feed
 }
 

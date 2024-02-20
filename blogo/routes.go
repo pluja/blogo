@@ -54,7 +54,7 @@ func InitRoutes() *chi.Mux {
 	r.Handle("/static/*", http.StripPrefix("/static/", fileServer))
 
 	r.Get("/", GetIndex)
-	r.Get("/p/{slug}", GetBlogPost)
+	r.Get("/p/{slug}", ServeBlogPost)
 	r.Get("/p/{slug}/raw", GetRawMarkdown)
 	r.Get("/t/{tag}", GetTagPosts)
 	r.Get("/about", GetAbout)

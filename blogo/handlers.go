@@ -1,9 +1,10 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
+	"fmt"
 	"net/http"
+	"os"
+	"path"
 	"sort"
 
 	"github.com/go-chi/chi/v5"
@@ -11,7 +12,12 @@ import (
 )
 
 func GetIndex(w http.ResponseWriter, r *http.Request) {
-	articles := GetAllArticles()
+	articles := Badger.GetAllArticles()
+	// Sort by date
+	sort.Slice(articles, func(i, j int) bool {
+		return articles[i].Date.After(articles[j].Date)
+	})
+
 	varmap := map[string]interface{}{
 		"Articles": articles,
 		"Blogo":    Blogo,
@@ -23,56 +29,24 @@ func GetIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetBlogPost(w http.ResponseWriter, r *http.Request) {
+func ServeBlogPost(w http.ResponseWriter, r *http.Request) {
 	slug := chi.URLParam(r, "slug")
+	log.Debug().Msgf("%v", slug)
+	blogPath := fmt.Sprintf("%v/content", os.Getenv("CONTENT_PATH"))
+	filePath := path.Join(blogPath, fmt.Sprintf("%s.html", slug))
 
-	// Get article from redis
-	ctx := context.Background()
-	result, err := RedisDb.Get(ctx, slug).Result()
-	if err != nil {
-		log.Err(err).Msg("Error getting article from Redis")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	log.Debug().Msgf("%v", filePath)
 
-	// Unmarshal the result into an Article struct
-	var article ArticleData
-	err = json.Unmarshal([]byte(result), &article)
-	if err != nil {
-		log.Err(err).Msg("Error unmarshalling article from Redis")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	varmap := map[string]interface{}{
-		"Article": article,
-		"Blogo":   Blogo,
-	}
-
-	// Execute the template from templates.go
-	if err := PostTmpl.ExecuteTemplate(w, "base", varmap); err != nil {
-		log.Error().Err(err).Msg("Error executing template:")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	http.ServeFile(w, r, filePath)
 }
 
 func GetRawMarkdown(w http.ResponseWriter, r *http.Request) {
 	slug := chi.URLParam(r, "slug")
 
 	// Get article from redis
-	ctx := context.Background()
-	result, err := RedisDb.Get(ctx, slug).Result()
+	article, err := Badger.GetPostBySlug(slug)
 	if err != nil {
 		log.Err(err).Msg("Error getting article from Redis")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// Unmarshal the result into an Article struct
-	var article ArticleData
-	err = json.Unmarshal([]byte(result), &article)
-	if err != nil {
-		log.Err(err).Msg("Error unmarshalling article from Redis")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -85,42 +59,21 @@ func GetTagPosts(w http.ResponseWriter, r *http.Request) {
 	tag := chi.URLParam(r, "tag")
 
 	// Get all article IDs from the corresponding tag set
-	ctx := context.Background()
-	articleIDs, err := RedisDb.SMembers(ctx, "tag:"+tag).Result()
-	if err != nil {
-		log.Err(err).Msg("Error getting articles from Redis")
-		articleIDs = []string{}
-	}
-
-	var articles []ArticleData
-	// Iterate over each article ID and fetch the article detail
-	for _, id := range articleIDs {
-		result, err := RedisDb.Get(ctx, id).Result()
-		if err != nil {
-			log.Err(err).Msg("Error getting article from Redis")
-			continue
-		}
-
-		// Unmarshal the result into an Article struct
-		var article ArticleData
-		err = json.Unmarshal([]byte(result), &article)
-		if err != nil {
-			log.Err(err).Msg("Error unmarshalling article from Redis")
-		}
-
-		// Skip draft articles
-		if !article.Draft {
-			articles = append(articles, article)
+	articles := Badger.GetAllArticles()
+	var tagArticles []ArticleData
+	for _, article := range articles {
+		if StringInSlice(tag, article.Tags) {
+			tagArticles = append(tagArticles, article)
 		}
 	}
 
 	// Sort by date
-	sort.Slice(articles, func(i, j int) bool {
-		return articles[i].Date.After(articles[j].Date)
+	sort.Slice(tagArticles, func(i, j int) bool {
+		return tagArticles[i].Date.After(tagArticles[j].Date)
 	})
 
 	varmap := map[string]interface{}{
-		"Articles": articles,
+		"Articles": tagArticles,
 		"Blogo":    Blogo,
 		"Tag":      tag,
 	}

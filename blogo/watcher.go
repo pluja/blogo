@@ -27,7 +27,11 @@ func InitWatcher() {
 				if event.Op&fsnotify.Write == fsnotify.Write || event.Op&fsnotify.Create == fsnotify.Create {
 					if strings.HasSuffix(event.Name, ".md") {
 						log.Printf("Reloading article: %v", event.Name)
-						LoadArticle(event.Name)
+						article, _ := GetArticleFromFile(event.Name)
+						if article.Slug != "" {
+							LoadArticle(article)
+							GenerateArticleStatic(article)
+						}
 						UpdateFeed()
 					}
 				}
@@ -37,6 +41,7 @@ func InitWatcher() {
 					if strings.HasSuffix(event.Name, ".md") {
 						log.Printf("Removing article: %v", event.Name)
 						RemoveArticle(event.Name)
+						RemoveArticleStatic(event.Name)
 						UpdateFeed()
 					}
 				}
@@ -46,7 +51,7 @@ func InitWatcher() {
 					if strings.HasSuffix(event.Name, ".md") {
 						log.Printf("Replacing article: %v", event.Name)
 						RemoveArticle(event.Name)
-						LoadArticle(event.Name)
+						RemoveArticleStatic(event.Name)
 						UpdateFeed()
 					}
 				}
