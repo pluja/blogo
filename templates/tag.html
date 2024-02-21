@@ -1,43 +1,56 @@
-{{define "title"}}#{{.Tag}} | {{.Blogo.Title}}{{end}}
+{{define "title"}}#{{.Tag}} | {{.Blogo.Title}}{{end}} 
 
 {{define "extraHead"}}
 <meta property="og:type" content="website" />
-<meta name="description" content="{{.Blogo.Description}}">
+<meta name="description" content="{{.Blogo.Description}}" />
 <meta property="og:description" content="{{.Blogo.Description}}" />
-<meta name="keywords" content="{{.Blogo.Keywords}}">
+<meta name="keywords" content="{{.Blogo.Keywords}}" />
 <meta property="og:title" content="#{{.Tag}} | {{.Blogo.Title}}" />
 <meta property="og:url" content="{{.Blogo.Url}}" />
 <!--Add canonical url-->
 <link rel="canonical" href="{{.Blogo.Url}}/t/{{.Tag}}" />
-{{end}}
+{{end}} 
 
 {{define "main"}}
-<section class="flex flex-col items-center justify-center px-4 mt-8 font-mono">
-    <h2 class="text-2xl font-bold">tag: #{{.Tag}}</h2>
-    <ul class="max-w-lg mt-4 mb-8 space-y-8 ">
-        {{range .Articles}}
-        <li>
-            <span class="text-xs mb-0.5 text-right text-gray-500">({{humanizeTime .Date}})</span>
-            <div>
-                .* <a class="text-lg font-bold underline capitalize hover:text-blue-900 dark:hover:text-blue-300"
-                    href="/p/{{.Slug}}">{{.Title}}</a>
+  <section class="flex flex-col justify-center items-center px-4 mt-8 font-mono">
+    <h2 class="p-2 mb-8 text-2xl font-bold border border-white/60">tag: #{{.Tag}}</h2>
+    <ul class="mb-8 space-y-8 max-w-lg">
+      {{range .Articles}}
+        {{if .Draft}} {{continue}} {{end}}
+          <li>
+            <div class="hover:text-blue-900 dark:hover:text-blue-300">
+              .* <a class="font-bold underline text-md md:text-lg" href="/p/{{.Slug}}">{{.Title}}</a>
             </div>
-            {{if ne .Summary ""}}
-            <div class="mt-2 text-sm text-justify text-opacity-70 dark:text-gray-400">
-                {{.Summary}}
-            </div>
-            {{end}}
-            {{if ne (len .Tags) 0}}
-            <div class="mt-0.5">
-                {{range .Tags}}
-                <a class="py-2 text-xs text-gray-500 no-underline hover:text-blue-900 dark:hover:text-blue-300"
-                    href="/t/{{.}}">#{{.}}</a>
-                {{end}}
-            </div>
-            {{end}}
-        </li>
-        {{end}}
-    </ul>
-</section>
 
+            <div class="px-0.5 my-0.5">
+              <span class="text-xs text-gray-600 no-underline">[{{humanizeTime .Date}}]</span>
+              {{if ne (len .Tags) 0}} 
+                {{range .Tags}}
+                  <a
+                    class="py-2 text-xs text-gray-500 no-underline hover:text-blue-900 dark:hover:text-blue-300"
+                    href="/t/{{.}}">#{{.}}</a>
+                {{end}} 
+              {{end}}
+            </div>
+
+            {{if ne .Summary ""}}
+              <div class="px-0.5 my-1 text-xs text-justify md:text-sm dark:text-gray-400">
+                {{.Summary}}
+              </div>
+            {{end}}
+          </li>
+      {{end}}
+    </ul>
+
+    {{if ne .TotalPages 1}}
+      <div class="my-6 space-x-2 font-mono [&>a]:text-sm [&>a]:border [&>a]:border-white/60 [&>a]:p-1 [&>a]:mx-2 text-white/80">
+        {{if ne .Page 1}}
+          <a href="/?p={{add .Page -1}}">NEWER POSTS</a>
+        {{end}} 
+        {{if lt .Page .TotalPages}}
+          <a href="/?p={{add .Page 1}}">OLDER POSTS</a>
+        {{end}}
+      </div>
+    {{end}}
+  </section>
 {{end}}
