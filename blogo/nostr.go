@@ -176,14 +176,8 @@ func NostrPublish(ad ArticleData) (string, error) {
 				continue
 			}
 			connected = true
-			status, err := relay.Publish(ctx, ev)
-			if err != nil {
-				log.Err(err).Msgf("failed to publish to %v:", url)
-				continue
-			}
-
-			if status == nostr.PublishStatusFailed {
-				log.Warn().Msgf("failed to publish to %v, status: %v", url, status)
+			if err := relay.Publish(ctx, ev); err != nil {
+				log.Warn().Err(err).Msgf("failed to publish to %v", url)
 				continue
 			}
 
