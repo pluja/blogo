@@ -2,26 +2,48 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"net/http"
 	"os"
 	"path"
 	"sort"
+	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/rs/zerolog/log"
 )
 
 func GetIndex(w http.ResponseWriter, r *http.Request) {
+	page := r.URL.Query().Get("p")
+
+	pageNum, _ := strconv.Atoi(page)
+	if pageNum <= 0 {
+		pageNum = 1
+	}
+
+	from := (pageNum - 1) * 10
+	to := from + 10
+
 	articles := Badger.GetAllArticles()
 	// Sort by date
 	sort.Slice(articles, func(i, j int) bool {
 		return articles[i].Date.After(articles[j].Date)
 	})
 
-	varmap := map[string]interface{}{
-		"Articles": articles,
-		"Blogo":    Blogo,
+	totalPages := int(math.Ceil(float64(len(articles)) / 10.0))
+	if to > len(articles) {
+		to = len(articles)
 	}
+	pagedArticles := articles[from:to]
+
+	varmap := map[string]interface{}{
+		"Articles":   pagedArticles,
+		"Blogo":      Blogo,
+		"Page":       pageNum,
+		"TotalPages": totalPages,
+	}
+
+	log.Debug().Msgf("From: %d - To: %d", from, to)
 	// Execute the template from templates.go
 	if err := IndexTmpl.ExecuteTemplate(w, "base", varmap); err != nil {
 		log.Error().Err(err).Msg("Error executing template:")
@@ -57,30 +79,43 @@ func GetRawMarkdown(w http.ResponseWriter, r *http.Request) {
 
 func GetTagPosts(w http.ResponseWriter, r *http.Request) {
 	tag := chi.URLParam(r, "tag")
+	page := r.URL.Query().Get("p")
 
-	// Get all article IDs from the corresponding tag set
+	pageNum, _ := strconv.Atoi(page)
+	pageNum = int(math.Max(0, float64(pageNum-1)))
+
+	from := pageNum * 10
+	to := from + 10
+
 	articles := Badger.GetAllArticles()
-	var tagArticles []ArticleData
+	tagArticles := make([]ArticleData, 0, len(articles))
 	for _, article := range articles {
 		if StringInSlice(tag, article.Tags) {
 			tagArticles = append(tagArticles, article)
 		}
 	}
 
-	// Sort by date
 	sort.Slice(tagArticles, func(i, j int) bool {
 		return tagArticles[i].Date.After(tagArticles[j].Date)
 	})
 
+	totalPages := int(math.Ceil(float64(len(tagArticles)) / 10.0))
+
+	if to > len(tagArticles) {
+		to = len(tagArticles)
+	}
+	log.Debug().Msgf("From: %d - To: %d", from, to)
+	pagedArticles := tagArticles[from:to]
+
 	varmap := map[string]interface{}{
-		"Articles": tagArticles,
-		"Blogo":    Blogo,
-		"Tag":      tag,
+		"Articles":   pagedArticles,
+		"Blogo":      Blogo,
+		"Tag":        tag,
+		"Page":       pageNum,
+		"TotalPages": totalPages,
 	}
 
-	// Execute the template from templates.go
 	if err := TagTmpl.ExecuteTemplate(w, "base", varmap); err != nil {
-		log.Error().Err(err).Msg("Error executing template:")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

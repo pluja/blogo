@@ -79,6 +79,9 @@ func createTemplate(files []string) *template.Template {
 		"slice": func(args ...interface{}) []interface{} {
 			return args
 		},
+		"add": func(a, b int) int {
+			return a + b
+		},
 		"html": func(value string) template.HTML { return template.HTML(value) },
 		"safeUrl": func(s string) template.URL {
 			return template.URL(s)
