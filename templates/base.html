@@ -8,6 +8,9 @@
         <link rel='stylesheet' href='/static/css/style.css'>
         {{block "extraHead" .}} {{end}}
         <title>{{template "title" .}}</title>
+        <link rel="alternate" type="application/atom+xml" title="{{template "title" .}} (Atom Syndication)" href="{{.Blogo.Url}}/atom">
+        <link rel="alternate" type="application/json" title="{{template "title" .}} (JSON Feed)" href="{{.Blogo.Url}}/json">
+        <link rel="alternate" type="application/rss+xml" title="{{template "title" .}} (RSS Feed)" href="{{.Blogo.Url}}/rss">
     </head>
     <body class="flex flex-col justify-center items-center py-4 min-h-screen font-mono text-gray-900 bg-amber-50 dark:bg-zinc-900 dark:text-gray-300">
         <main class="py-8 font-mono">
