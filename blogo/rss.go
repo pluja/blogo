@@ -29,14 +29,16 @@ func UpdateFeed() error {
 
 	feed.Items = []*feeds.Item{}
 	for _, article := range articles {
-		item := &feeds.Item{
-			Title:       article.Title,
-			Link:        &feeds.Link{Href: fmt.Sprintf("%v/p/%v", os.Getenv("BLOGO_URL"), article.Slug)},
-			Description: article.Summary,
-			Created:     article.Date,
-		}
+		if !article.Draft {
+			item := &feeds.Item{
+				Title:       article.Title,
+				Link:        &feeds.Link{Href: fmt.Sprintf("%v/p/%v", os.Getenv("BLOGO_URL"), article.Slug)},
+				Description: article.Summary,
+				Created:     article.Date,
+			}
 
-		feed.Items = append(feed.Items, item)
+			feed.Items = append(feed.Items, item)
+		}
 	}
 
 	// Save feed to badger
