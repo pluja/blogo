@@ -4,10 +4,11 @@ Blogo is a light and easy blogging engine. No complicated extras, just a straigh
 
 Now, here's the twist: Blogo can also publish your posts to Nostr for backing them up and getting even more reach. **Lift your ideas higher!**
 
-## [Demos](https://blogo.site)
+## Some blogs using Blogo
 
 - [blogo.site](https://blogo.site)
 - [blog.kycnot.me](https://blog.kycnot.me)
+- [blog.kyun.host](https://blog.kyun.host)
 
 ## Features
 
@@ -23,6 +24,7 @@ Now, here's the twist: Blogo can also publish your posts to Nostr for backing th
     - Syntax Highlighting using [chroma](https://github.com/alecthomas/chroma)
     - YAML Metadata for posts info.
 - **Feeds**: RSS, Atom and JSON feeds!
+- **Raw endpoint**: Add `/raw` to any article link to get the raw markdown!
 - **About page**: Easily create an About page so everyone can know more about you.
 - **Customizable**: You can fully customize the look and feel of your blog by editing the templates and CSS.
     - Uses Golang Templates, TailwindCSS and pure plain CSS.
