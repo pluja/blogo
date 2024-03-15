@@ -114,6 +114,9 @@ func createTemplate(files []string) *template.Template {
 			readTime := math.Ceil(float64(wordCount) / float64(readSpeed))
 			return int(readTime)
 		},
+		"dateString": func(t time.Time) string {
+			return t.Format("2006-01-02")
+		},
 	}
 
 	tmpl := template.New("").Funcs(funcMap)

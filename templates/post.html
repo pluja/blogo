@@ -55,9 +55,9 @@
         {{end}}
         {{if ne .Article.Author ""}}
         <div class="mb-0 text-xs text-black drop-shadow-sm dark:text-slate-100">~{{readTime .Article.Md}} min read</div>
-            <div class="mb-0 text-sm text-black drop-shadow-sm dark:text-slate-100">by {{.Article.Author}}, {{humanizeTime .Article.Date}}</div>
+            <div class="mb-0 text-sm text-black drop-shadow-sm dark:text-slate-100">by {{.Article.Author}}, {{dateString .Article.Date}}</div>
         {{else}}
-            <div class="mt-2 mb-0 text-sm font-bold text-black dark:text-slate-100">{{humanizeTime .Article.Date}}</div>
+            <div class="mt-2 mb-0 text-sm font-bold text-black dark:text-slate-100">{{dateString .Article.Date}}</div>
         {{end}}
         {{if and (ne .Article.NostrUrl "") (ne .Article.NostrUrl "0") (ne .Article.NostrUrl "false")}}
             <div class="pb-2 text-center">
