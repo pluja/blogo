@@ -13,11 +13,11 @@ Now, here's the twist: Blogo can also publish your posts to Nostr for backing th
 ## Features
 
 - **Easy to use**:Just put Markdown files in a folder and Blogo will take care of the rest.
-- **Fast**: Blogo is written in Golang and uses Redis as the backend db.
+- **Fast**: Blogo is written in Golang and uses BadgerDB as the backend db.
 - **Light**: Blogo is light on resources, and light on your eyes:
     - No JS, no tracking, no cookies.
     - No cluttered UI, focus on reading.
-    - No database, just Redis.
+    - No database.
     - ~10MB Docker image.
 - **Markdown**: Write your posts in Markdown.
     - Github Flavored Markdown is supported.
@@ -40,7 +40,24 @@ Now, here's the twist: Blogo can also publish your posts to Nostr for backing th
 
 There are two ways to self-host Blogo:
 
-### Docker
+## Docker
+
+1. Get the .env file:
+
+```bash
+wget https://raw.githubusercontent.com/pluja/blogo/main/example.env -O .env
+```
+2. Edit the `.env` file to fit your needs.
+
+3. Run blogo:
+
+```bash
+docker run --name blogo -v $(pwd)/articles:/app/articles -p 3000:3000 pluja/blogo -d
+```
+
+Blogo is now available at [http://localhost:3000](http://localhost:3000). You can now [create your first article](#create-your-first-article).
+
+### Docker Compose
 
 The easiest way to self-host Blogo is by using Docker. I will try to publish a Docker image soon, but for now you can build it yourself:
 
@@ -62,7 +79,7 @@ wget https://raw.githubusercontent.com/pluja/blogo/main/example.env -O .env
 docker-compose up -d
 ```
 
-Blogo is now available at [http://localhost:3000](http://localhost:3000).
+Blogo is now available at [http://localhost:3000](http://localhost:3000). You can now [create your first article](#create-your-first-article).
 
 #### Create your first article
 
@@ -98,6 +115,21 @@ Here's a list of the available metadata fields:
 ### About page
 
 To create an about page, just create a file called `about.md` in the `articles` folder. Blogo will automatically detect it and create a link to it in the navbar.
+
+### Static Content
+
+To add your own static content, you can just bind-mount any folder to `/app/static/your-folder`. Just add a volume `-v $(pwd)/img:/app/static/img`.
+
+If you are using docker compose, you can add:
+
+```
+volumes:
+    - ./img:/app/static/img
+```
+
+Then you can just use `/static/img/your-image.jpg` in the markdown to add an image.
+
+> The `/app/static` folder contains the css styles needed for styling Blogo. For this, it is recommended to always create subfolders with bind mounts inside.
 
 ### Publish to Nostr
 
