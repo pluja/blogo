@@ -17,7 +17,6 @@ Now, here's the twist: Blogo can also publish your posts to Nostr for backing th
 - **Light**: Blogo is light on resources, and light on your eyes:
     - No JS, no tracking, no cookies.
     - No cluttered UI, focus on reading.
-    - No database.
     - ~10MB Docker image.
 - **Markdown**: Write your posts in Markdown.
     - Github Flavored Markdown is supported.
