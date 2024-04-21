@@ -26,4 +26,5 @@ type Config struct {
 	Url         string
 	Keywords    string
 	Analytics   string
+	Timezone    string
 }

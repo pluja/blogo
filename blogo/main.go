@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/rs/cors"
@@ -136,6 +137,19 @@ func InitSettings() {
 		Blogo.Analytics = os.Getenv("BLOGO_ANALYTICS")
 	}
 
+	if os.Getenv("TIMEZONE") == "" {
+		Blogo.Timezone = "UTC"
+
+	} else {
+		Blogo.Timezone = os.Getenv("TIMEZONE")
+	}
+
+	location, err := time.LoadLocation(Blogo.Timezone)
+	if err != nil {
+		log.Fatal().Err(err).Msgf("Failed to load timezone location '%s'", Blogo.Timezone)
+	}
+	time.Local = location
+
 	LogSettings()
 }
 
@@ -145,6 +159,7 @@ func LogSettings() {
 	log.Info().Msgf("\t~ Description: %v", Blogo.Description)
 	log.Info().Msgf("\t~ Url: %v", Blogo.Url)
 	log.Info().Msgf("\t~ Keywords: %v", Blogo.Keywords)
+	log.Info().Msgf("\t~ Timezone: %v", Blogo.Timezone)
 	if Blogo.Analytics != "" {
 		log.Info().Msgf("\t~ Analytics: yes\n")
 	}

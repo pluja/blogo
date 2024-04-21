@@ -23,23 +23,25 @@ COPY ./templates ./templates
 RUN npm install && \
     npx tailwindcss -i ./static/css/input.css -o ./static/css/style.css --minify
 
-# Start from a complete image
-FROM alpine:latest as certs
-RUN apk --update add ca-certificates
+# Certificates and timezone data stage
+FROM alpine:3.19 as certs
+RUN apk update && apk add --no-cache ca-certificates tzdata
 
-# Final stage
+# Start from a complete image and include timezone data
 FROM scratch
 COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+# Include timezone data
+COPY --from=certs /usr/share/zoneinfo /usr/share/zoneinfo
 
 WORKDIR /app
 COPY --from=builder /app/blogo /app/blogo
 COPY --from=builder /app/articles /app/articles
-
-# Copy HTML files
 COPY templates templates
 COPY static static
-
 COPY --from=node /app/static/css/style.css ./static/css/style.css
+
+# Ensure the app uses the right timezone by setting the TZ environment variable
+ENV TZ="Europe/Warsaw"
 ENV PATH="/app:$PATH"
 
 EXPOSE 3000
