@@ -51,7 +51,13 @@ wget https://raw.githubusercontent.com/pluja/blogo/main/example.env -O .env
 3. Run blogo:
 
 ```bash
-docker run --name blogo -v $(pwd)/articles:/app/articles -p 3000:3000 pluja/blogo -d
+docker run \
+  --name blogo \
+  --env-file .env \
+  --volume ./articles:/app/articles \
+  --publish 3000:3000 \
+  --detach \
+  pluja/blogo:latest
 ```
 
 Blogo is now available at [http://localhost:3000](http://localhost:3000). You can now [create your first article](#create-your-first-article).
