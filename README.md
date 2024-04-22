@@ -54,7 +54,7 @@ wget https://raw.githubusercontent.com/pluja/blogo/main/example.env -O .env
 docker run \
   --name blogo \
   --env-file .env \
-  --volume ./articles:/app/articles \
+  --volume $(pwd)/articles:/app/articles \
   --publish 3000:3000 \
   --detach \
   pluja/blogo:latest
