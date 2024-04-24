@@ -81,7 +81,7 @@ wget https://raw.githubusercontent.com/pluja/blogo/main/example.env -O .env
 3. Run blogo:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 Blogo is now available at [http://localhost:3000](http://localhost:3000). You can now [create your first article](#create-your-first-article).
