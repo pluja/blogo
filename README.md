@@ -47,23 +47,23 @@ services:
     image: pluja/blogo:latest
     container_name: blogo
     restart: unless-stopped
-    environment:
-      # CONFIG
-      - BLOGO_TITLE=Blogo
-      - BLOGO_DESCRIPTION=A blog built with Blogo!
-      - BLOGO_KEYWORDS=blog,open source
-      - BLOGO_URL=http://localhost:3000
-      #- BLOGO_ANALYTICS=
-      - TIMEZONE=UTC
-
-      # NOSTR CONFIG
-      - PUBLISH_TO_NOSTR=false
-      #- NOSTR_NSEC=""
-      #- NOSTR_RELAYS="wss://nostr-pub.wellorder.net,wss://relay.damus.io,wss://relay.nostr.band"
     volumes:
       - ./articles:/app/articles
     ports:
       - "127.0.0.1:3000:3000"
+    environment:
+      # CONFIG
+      BLOGO_TITLE: Blogo
+      BLOGO_DESCRIPTION: A blog built with Blogo!
+      BLOGO_KEYWORDS: blog,open source
+      BLOGO_URL: http://localhost:3000
+      #BLOGO_ANALYTICS: '<script defer src="https://my.analytics.site/script.js"></script>'
+      TIMEZONE: UTC
+
+      # NOSTR CONFIG
+      PUBLISH_TO_NOSTR: false
+      #NOSTR_NSEC: ""
+      #NOSTR_RELAYS: "wss://nostr-pub.wellorder.net,wss://relay.damus.io,wss://relay.nostr.band"
 ```
 > Edit the `docker-compose.yml` file to fit your needs.
 
