@@ -35,48 +35,37 @@ Now, here's the twist: Blogo can also publish your posts to Nostr for backing th
 - **No JS**: Blogo doesn't use any JavaScript, so it's widely compatible and secure.
 - **CLI Tool**: A simple CLI tool will allow you to create new post templates.
 
-## Self-hosting
+## Self-hosting using Docker Compose
 
-There are two ways to self-host Blogo:
-
-## Docker
-
-1. Get the .env file:
-
-```bash
-wget https://raw.githubusercontent.com/pluja/blogo/main/example.env -O .env
-```
-2. Edit the `.env` file to fit your needs.
-
-3. Run blogo:
-
-```bash
-docker run \
-  --name blogo \
-  --env-file .env \
-  --volume $(pwd)/articles:/app/articles \
-  --publish 3000:3000 \
-  --detach \
-  pluja/blogo:latest
-```
-
-Blogo is now available at [http://localhost:3000](http://localhost:3000). You can now [create your first article](#create-your-first-article).
-
-### Docker Compose
-
-The easiest way to self-host Blogo is by using Docker. I will try to publish a Docker image soon, but for now you can build it yourself:
+The easiest way to self-host Blogo is by using Docker. 
 
 1. Get the docker-compose.yml:
 
-```bash
-wget https://raw.githubusercontent.com/pluja/blogo/main/docker-compose.yml
-```
+```yml
+services:
+  blogo:
+    image: pluja/blogo:latest
+    container_name: blogo
+    restart: unless-stopped
+    environment:
+      # CONFIG
+      - BLOGO_TITLE=Blogo
+      - BLOGO_DESCRIPTION=A blog built with Blogo!
+      - BLOGO_KEYWORDS=blog,open source
+      - BLOGO_URL=http://localhost:3000
+      #- BLOGO_ANALYTICS=
+      - TIMEZONE=UTC
 
-2. Get the .env file:
-```bash
-wget https://raw.githubusercontent.com/pluja/blogo/main/example.env -O .env
+      # NOSTR CONFIG
+      - PUBLISH_TO_NOSTR=false
+      #- NOSTR_NSEC=""
+      #- NOSTR_RELAYS="wss://nostr-pub.wellorder.net,wss://relay.damus.io,wss://relay.nostr.band"
+    volumes:
+      - ./articles:/app/articles
+    ports:
+      - "127.0.0.1:3000:3000"
 ```
-> Edit the `.env` file to fit your needs.
+> Edit the `docker-compose.yml` file to fit your needs.
 
 3. Run blogo:
 
@@ -84,16 +73,7 @@ wget https://raw.githubusercontent.com/pluja/blogo/main/example.env -O .env
 docker compose up -d
 ```
 
-Blogo is now available at [http://localhost:3000](http://localhost:3000). You can now [create your first article](#create-your-first-article).
-
-#### Create your first article
-
-> For more complete instructions, read the [usage](#usage) guide.
-
-- Run `docker exec -it blogo blogo -new my-post-slug` to create a new post.
-- The new post is available in the `articles` folder as `my-post-slug.md`.
-
-Put all your markdown files in the `articles` folder. You can also put your static files in the `static` folder (you will need to bind it).
+Blogo is now available at [http://localhost:3000](http://localhost:3000). You can now [create your first article](#usage).
 
 ## Usage
 
@@ -123,9 +103,9 @@ To create an about page, just create a file called `about.md` in the `articles` 
 
 ### Static Content
 
-To add your own static content, you can just bind-mount any folder to `/app/static/your-folder`. Just add a volume `-v $(pwd)/img:/app/static/img`.
+To add your own static content, you can just bind-mount any folder to `/app/static/your-folder`.
 
-If you are using docker compose, you can add:
+For example if you are using docker compose, you can add:
 
 ```
 volumes:
@@ -138,9 +118,9 @@ Then you can just use `/static/img/your-image.jpg` in the markdown to add an ima
 
 ### Publish to Nostr
 
-If you set the `PUBLISH_TO_NOSTR` variable in the `.env` file to `true`, Blogo will publish your posts to Nostr. By default, Blogo will generate an ephemeral key (changes on every restart) and use a default relay list. 
+If you set the `PUBLISH_TO_NOSTR` variable in the `docker-compose.yml` file to `true`, Blogo will publish your posts to Nostr. By default, Blogo will generate an ephemeral key (changes on every restart) and use a default relay list. 
 
-You can change either of these defaults by setting any of these variables in the `.env` file:
+You can change either of these defaults by setting any of these variables in the `docker-compose.yml` file:
 
 - `NOSTR_NSEC` - expects a valid `nsec` key. If you set this key, your posts will be always published for the same key, even on restarts.
     - You can generate a new Nostr key pair using `blogo -nkeys`.
@@ -152,7 +132,7 @@ You can change either of these defaults by setting any of these variables in the
 
 ### Add analytics
 
-You can add analytics to your blog by setting the `BLOGO_ANALYTICS` variable in the `.env` file to your analytics script. Blogo will automatically add it to the bottom of the page. **Make sure to put it all in a single line**!
+You can add analytics to your blog by setting the `BLOGO_ANALYTICS` variable in the `docker-compose.yml` file to your analytics script. Blogo will automatically add it to the bottom of the page. **Make sure to put it all in a single line**!
 
 ```env
 BLOGO_ANALYTICS='<script defer src="https://my.analytics.site/script.js"></script>'
