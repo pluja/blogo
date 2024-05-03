@@ -34,34 +34,44 @@
 
 {{define "main"}}
 
-<section class="px-2 pt-2 pb-8 text-center">
+<section class="px-2 pt-2 pb-6 text-center">
     {{if ne .Article.Image ""}}
-    <div class="px-2 my-4 w-full h-60 md:h-72">
-        <img src="{{.Article.Image}}" class="object-cover object-center w-full h-full opacity-90 dark:opacity-75" alt="">
+    <div class="flex justify-center items-center px-2 my-2 w-full">
+        <img src="{{.Article.Image}}" class="object-cover object-top max-w-2xl opacity-90 rouded-sm h-fit dark:opacity-75" alt="">
     </div>
     {{end}}
 
-    <h1 class="pt-4 mb-2 text-4xl font-bold text-gray-900 text-opacity-90 capitalize dark:text-gray-300 md:text-5xl">{{.Article.Title}}</h1>
-    {{range .Article.Tags}}
-        <span class="inline-block mb-2 text-xs text-center text-black dark:text-zinc-400">
-            <a class="no-underline hover:text-blue-900 dark:hover:text-blue-300" href="/t/{{.}}">#{{.}}</a>
-        </span>
-    {{end}}
+    <h1 class="pt-2 mb-2 text-3xl font-bold text-gray-900 text-opacity-90 capitalize sm:text-4xl dark:text-gray-300 md:text-5xl">{{.Article.Title}}</h1>
+    
     <div class="mt-3 mb-3 opacity-60">
         {{if .Article.Draft}}
             <div class="pb-2 text-center">
                 <span class="font-bold badge badge-warning badge-lg">DRAFT</span>
             </div>
         {{end}}
-        {{if ne .Article.Author ""}}
-        <div class="mb-0 text-xs text-black drop-shadow-sm dark:text-slate-100">~{{readTime .Article.Md}} min read</div>
-            <div class="mb-0 text-sm text-black drop-shadow-sm dark:text-slate-100">by {{.Article.Author}}, {{dateString .Article.Date}}</div>
-        {{else}}
-            <div class="mt-2 mb-0 text-sm font-bold text-black dark:text-slate-100">{{dateString .Article.Date}}</div>
+
+        {{if gt (len .Article.Tags) 0}}
+        <div>
+            {{range .Article.Tags}}
+            <span class="inline-block mb-1 text-xs text-center text-black/80 dark:text-white/50">
+                <a class="no-underline hover:text-blue-900 dark:hover:text-blue-300" href="/t/{{.}}">#{{.}}</a>
+            </span>
+            {{end}}
+        </div>
         {{end}}
+
+        <div class="mb-0 text-xs font-medium text-center text-black/80 dark:text-white/80">
+            <span class="drop-shadow-sm">~{{readTime .Article.Md}} min read</span>
+            {{if ne .Article.Author ""}}
+                <span class="drop-shadow-sm">by {{.Article.Author}}, {{dateString .Article.Date}}</span>
+            {{else}}
+                <span>{{dateString .Article.Date}}</span>
+            {{end}}
+        </div>
+        
         {{if and (ne .Article.NostrUrl "") (ne .Article.NostrUrl "0") (ne .Article.NostrUrl "false")}}
             <div class="pb-2 text-center">
-                <a class="text-sm font-bold text-blue-900 underline dark:text-blue-300" href="{{.Article.NostrUrl}}">Read on Nostr</a>
+                <a class="text-xs font-bold text-blue-900 underline dark:text-blue-300" href="{{.Article.NostrUrl}}">Read on Nostr</a>
             </div>
         {{end}}
     </div>  
