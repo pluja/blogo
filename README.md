@@ -65,7 +65,8 @@ services:
       #NOSTR_NSEC: ""
       #NOSTR_RELAYS: "wss://nostr-pub.wellorder.net,wss://relay.damus.io,wss://relay.nostr.band"
 ```
-> Edit the `docker-compose.yml` file to fit your needs.
+
+2. Edit the `docker-compose.yml` file to fit your needs.
 
 3. Run blogo:
 
