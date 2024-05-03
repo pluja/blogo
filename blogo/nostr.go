@@ -105,7 +105,7 @@ func PublishArticleToNostr(article ArticleData) error {
 		if err != nil {
 			log.Err(err).Msg("Could not publish to Nostr")
 		} else {
-			err = AddMetadataToFile(fmt.Sprintf("%v.md", article.Slug), "NostrUrl", fmt.Sprintf("https://habla.news/a/%v", naddr))
+			err = AddMetadataToFile(fmt.Sprintf("%v.md", article.Slug), "NostrUrl", fmt.Sprintf("https://njump.me/%v", naddr))
 			if err != nil {
 				log.Err(err).Msgf("Could not add %v to NostrUrl field", naddr)
 			}
