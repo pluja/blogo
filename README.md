@@ -51,7 +51,7 @@ services:
 2. Get and edit the [config file]():
 
 ```
-wget -o blogo.yml https://github.com/pluja/blogo/blob/v3/example.blogo.yml
+wget -O blogo.yml https://raw.githubusercontent.com/pluja/blogo/refs/heads/v3/example.blogo.yml
 ```
 
 > All blogo.yml variables can be set as environment variables. Check out [Configuration](#configuration) section.
